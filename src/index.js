@@ -42,13 +42,17 @@ function render(diff) {
 }
 
 function logger({ getState }) {
-  return (next) => (action) => {
+  return (emptyDiff = false) => (next) => (action) => {
     const prevState = getState();
     const returnValue = next(action);
     const newState = getState();
     const time = new Date();
 
     const diff = differ(prevState, newState);
+
+    if(emptyDiff && !diff){
+      return returnValue;
+    }
 
     try {
       console.group('diff @', `${time.getHours()}:${time.getMinutes()}:${time.getSeconds()}`);
